@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Producto } from './entities/producto.entity';
 import { CreateProductoDto } from './dto/create-producto.dto';
-import { UpdateProductoDto } from './dto/update-producto.dto';
 
 @Injectable()
 export class ProductoService {
-  create(createProductoDto: CreateProductoDto) {
-    return 'This action adds a new producto';
+  constructor(
+    @InjectRepository(Producto)
+    private readonly productoRepository: Repository<Producto>,
+  ) {}
+
+  async create(dto: CreateProductoDto): Promise<Producto> {
+    const producto = this.productoRepository.create(dto);
+    return await this.productoRepository.save(producto);
   }
 
-  findAll() {
-    return `This action returns all producto`;
+  async findAll(): Promise<Producto[]> {
+    return await this.productoRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} producto`;
+  async findOne(id: string): Promise<Producto> {
+    const producto = await this.productoRepository.findOne({ where: { id } });
+    if (!producto) throw new NotFoundException(`Producto con id ${id} no encontrado`);
+    return producto;
   }
 
-  update(id: number, updateProductoDto: UpdateProductoDto) {
-    return `This action updates a #${id} producto`;
+  async update(id: string, dto: Partial<CreateProductoDto>): Promise<Producto> {
+    const producto = await this.findOne(id);
+    Object.assign(producto, dto);
+    return await this.productoRepository.save(producto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} producto`;
+  async remove(id: string): Promise<void> {
+    const result = await this.productoRepository.delete(id);
+    if (result.affected === 0) throw new NotFoundException(`Producto con id ${id} no encontrado`);
   }
 }

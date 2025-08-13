@@ -1,35 +1,34 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { PedidoService } from './pedido.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
-import { UpdatePedidoDto } from './dto/update-pedido.dto';
+import { PedidoService } from './pedido.service';
 
 @Controller()
-export class PedidoController {
+export class PedidoMicroserviceController {
   constructor(private readonly pedidoService: PedidoService) {}
 
-  @MessagePattern('createPedido')
-  create(@Payload() createPedidoDto: CreatePedidoDto) {
-    return this.pedidoService.create(createPedidoDto);
+  @MessagePattern({ cmd: 'createPedido' })
+  create(@Payload() dto: CreatePedidoDto) {
+    return this.pedidoService.create(dto);
   }
 
-  @MessagePattern('findAllPedido')
+  @MessagePattern({ cmd: 'findAllPedidos' })
   findAll() {
     return this.pedidoService.findAll();
   }
 
-  @MessagePattern('findOnePedido')
-  findOne(@Payload() id: number) {
+  @MessagePattern({ cmd: 'findOnePedido' })
+  findOne(@Payload() id: string) {
     return this.pedidoService.findOne(id);
   }
 
-  @MessagePattern('updatePedido')
-  update(@Payload() updatePedidoDto: UpdatePedidoDto) {
-    return this.pedidoService.update(updatePedidoDto.id, updatePedidoDto);
+  @MessagePattern({ cmd: 'updatePedido' })
+  update(@Payload() updateData: { id: string; data: Partial<CreatePedidoDto> }) {
+    return this.pedidoService.update(updateData.id, updateData.data);
   }
 
-  @MessagePattern('removePedido')
-  remove(@Payload() id: number) {
+  @MessagePattern({ cmd: 'removePedido' })
+  remove(@Payload() id: string) {
     return this.pedidoService.remove(id);
   }
 }

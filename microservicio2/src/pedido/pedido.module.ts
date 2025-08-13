@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
-import { PedidoController } from './pedido.controller';
+import { PedidoMicroserviceController } from './pedido.controller';
 
 @Module({
-  controllers: [PedidoController],
+  controllers: [PedidoMicroserviceController],
   providers: [PedidoService],
 })
 export class PedidoModule {}

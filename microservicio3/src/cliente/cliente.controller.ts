@@ -1,35 +1,34 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
-import { UpdateClienteDto } from './dto/update-cliente.dto';
+import { ClienteService } from './cliente.service';
 
 @Controller()
-export class ClienteController {
+export class ClienteMicroserviceController {
   constructor(private readonly clienteService: ClienteService) {}
 
-  @MessagePattern('createCliente')
-  create(@Payload() createClienteDto: CreateClienteDto) {
-    return this.clienteService.create(createClienteDto);
+  @MessagePattern({ cmd: 'createCliente' })
+  create(@Payload() dto: CreateClienteDto) {
+    return this.clienteService.create(dto);
   }
 
-  @MessagePattern('findAllCliente')
+  @MessagePattern({ cmd: 'findAllClientes' })
   findAll() {
     return this.clienteService.findAll();
   }
 
-  @MessagePattern('findOneCliente')
-  findOne(@Payload() id: number) {
+  @MessagePattern({ cmd: 'findOneCliente' })
+  findOne(@Payload() id: string) {
     return this.clienteService.findOne(id);
   }
 
-  @MessagePattern('updateCliente')
-  update(@Payload() updateClienteDto: UpdateClienteDto) {
-    return this.clienteService.update(updateClienteDto.id, updateClienteDto);
+  @MessagePattern({ cmd: 'updateCliente' })
+  update(@Payload() updateData: { id: string; data: Partial<CreateClienteDto> }) {
+    return this.clienteService.update(updateData.id, updateData.data);
   }
 
-  @MessagePattern('removeCliente')
-  remove(@Payload() id: number) {
+  @MessagePattern({ cmd: 'removeCliente' })
+  remove(@Payload() id: string) {
     return this.clienteService.remove(id);
   }
 }

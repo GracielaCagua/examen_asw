@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Pedido } from './entities/pedido.entity';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
-import { UpdatePedidoDto } from './dto/update-pedido.dto';
 
 @Injectable()
 export class PedidoService {
-  create(createPedidoDto: CreatePedidoDto) {
-    return 'This action adds a new pedido';
+  constructor(
+    @InjectRepository(Pedido)
+    private readonly pedidoRepository: Repository<Pedido>,
+  ) {}
+
+  async create(dto: CreatePedidoDto): Promise<Pedido> {
+    const pedido = this.pedidoRepository.create(dto);
+    return await this.pedidoRepository.save(pedido);
   }
 
-  findAll() {
-    return `This action returns all pedido`;
+  async findAll(): Promise<Pedido[]> {
+    return await this.pedidoRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pedido`;
+  async findOne(id: string): Promise<Pedido> {
+    const pedido = await this.pedidoRepository.findOne({ where: { id } });
+    if (!pedido) throw new NotFoundException(`Pedido con id ${id} no encontrado`);
+    return pedido;
   }
 
-  update(id: number, updatePedidoDto: UpdatePedidoDto) {
-    return `This action updates a #${id} pedido`;
+  async update(id: string, dto: Partial<CreatePedidoDto>): Promise<Pedido> {
+    const pedido = await this.findOne(id);
+    Object.assign(pedido, dto);
+    return await this.pedidoRepository.save(pedido);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pedido`;
+  async remove(id: string): Promise<void> {
+    const result = await this.pedidoRepository.delete(id);
+    if (result.affected === 0) throw new NotFoundException(`Pedido con id ${id} no encontrado`);
   }
 }
