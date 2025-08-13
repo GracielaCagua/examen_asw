@@ -1,10 +1,12 @@
-import { Module } from "@nestjs/common";
-import { ProductosController } from "./producto.controller";
+import { Module } from '@nestjs/common';
+import { EventosGateway } from 'src/ClientesGateway';
+import { NatsModule } from 'src/transports/nats.module';
+import { ProductosController } from './producto.controller';
 
 @Module({
-    imports: [],
-    providers: [],
-    controllers: [ProductosController]
+  imports : [ NatsModule ],
+  exports: [ ],
+  controllers: [ProductosController],
+  providers: [EventosGateway],
 })
-export class ProductoModule { }
-
+export class ProductoModule {}
