@@ -25,7 +25,7 @@ if (error) {
 const envVars: EnvVars = value;
 
 export const envs = {
-  port: envVars.PORT ?? 3004, // Puerto por defecto 3000 si no está definido
+  port: 3005,
   databaseUrl:  'mysql://root:root@localhost:3306/base1',
   natsServers: 'nats://localhost:4222',
 };

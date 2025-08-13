@@ -29,6 +29,5 @@ const envVars:EnvVars = value;
 
 export const envs = {
   port: envVars.PORT ?? 3001, // Puerto por defecto 3000 si no está definido
-  databaseUrl: envVars.DATABASE_URL ?? 'mysql://root:root@localhost:3306/base2',
   natsServers: envVars.NATS_SERVERS ?? ['nats://localhost:4222'],
 };

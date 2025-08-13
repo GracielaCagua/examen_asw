@@ -1,20 +1,18 @@
 import { Module } from '@nestjs/common';
 import { NatsModule } from './transports/nats.module';
 import { AuthModule } from './auth/auth.module';
-import { AdministracionVehiculosModule } from './vehiculos/vehiculo.module';
-import { GestionInternaModule } from './gestion_interna/getion_interna.module';
-import { Client } from '@nestjs/microservices';
-import { ClienteModule } from './clientes/control_realizado/cliente.module';
-import { GestionClienteModule } from './clientes/gestion_cliente.module';
+import { ClientesController } from './cliente/cliente.controller';
+import { PedidosController } from './pedido/pedido.controller';
+import { ProductosController } from './producto/producto.controller';
+import { EventosGateway } from './ClientesGateway';
 
 
 @Module({
   imports: [
     NatsModule,
     AuthModule,
-    AdministracionVehiculosModule,
-    GestionInternaModule,
-    GestionClienteModule
   ],
+  providers: [EventosGateway],
+  controllers: [ClientesController, PedidosController, ProductosController]
 })
 export class AppModule { }
